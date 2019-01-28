@@ -11,3 +11,7 @@ import Foundation
 enum Identifiers: String {
     case PrototypeCellId = "toDoItemCell"
 }
+
+enum Persistence: String {
+    case UserDefaultsItemArray = "TodoListArray"
+}
