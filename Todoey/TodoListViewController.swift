@@ -45,6 +45,7 @@ class TodoListViewController: UITableViewController {
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         var textField = UITextField()
         let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
+        
         let addItemAction = UIAlertAction(title: "Add Item", style: .default) { (action) in
             if let itemText = textField.text {
                 self.itemArray.append(itemText)
@@ -52,7 +53,7 @@ class TodoListViewController: UITableViewController {
             }
         }
         
-        let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         
         alert.addTextField { (alertTextField) in
             alertTextField.placeholder = "Create new item"
