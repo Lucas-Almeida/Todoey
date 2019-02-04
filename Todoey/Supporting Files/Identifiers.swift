@@ -15,3 +15,7 @@ enum Identifiers: String {
 enum Persistence: String {
     case UserDefaultsItemArray = "TodoListArray"
 }
+
+enum Pathing: String {
+    case ItemsPlist = "Items.plist"
+}
