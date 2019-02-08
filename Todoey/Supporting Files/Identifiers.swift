@@ -19,3 +19,7 @@ enum Persistence: String {
 enum Pathing: String {
     case ItemsPlist = "Items.plist"
 }
+
+enum Entities: String {
+    case Item = "Item"
+}

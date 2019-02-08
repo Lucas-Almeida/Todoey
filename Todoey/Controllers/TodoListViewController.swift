@@ -7,12 +7,15 @@
 //
 
 import UIKit
+import CoreData
 
 class TodoListViewController: UITableViewController {
 
+    let context = CoreDataManager.sharedManager.persistentContainer.viewContext
+    
     var itemArray = [Item]()
     
-    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent(Pathing.ItemsPlist.rawValue)
+//    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent(Pathing.ItemsPlist.rawValue)
     
 //    let defaults = UserDefaults.standard
     
@@ -24,6 +27,8 @@ class TodoListViewController: UITableViewController {
 //        if let items = defaults.array(forKey: Persistence.UserDefaultsItemArray.rawValue) as? [Item] {
 //            itemArray = items
 //        }
+        
+        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
         loadItems()
     }
@@ -49,8 +54,10 @@ class TodoListViewController: UITableViewController {
     //MARK - Tableview Delegate Methods
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        itemArray[indexPath.row].done = !itemArray[indexPath.row].done
-        saveItems()
+        itemArray[indexPath.row].done = !itemArray[indexPath.row].done        
+//        itemArray[indexPath.row].setValue(false, forKey: "done")
+
+        saveContext()
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
@@ -60,13 +67,13 @@ class TodoListViewController: UITableViewController {
         let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert)
         
         let addItemAction = UIAlertAction(title: "Add Item", style: .default) { (action) in
-            if let itemText = textField.text {
-                self.itemArray.append(Item(title: itemText))
-                
-                self.saveItems()
-              
+//            let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+            let newItem = Item(context: self.context)
+            newItem.title = textField.text!
+            newItem.done = false
+            self.itemArray.append(newItem)
+            self.saveContext()
 //                self.defaults.set(self.itemArray, forKey: Persistence.UserDefaultsItemArray.rawValue)
-            }
         }
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
@@ -82,27 +89,58 @@ class TodoListViewController: UITableViewController {
         present(alert, animated: true, completion: nil)
     }
     
-    func saveItems() {
-        let encoder = PropertyListEncoder()
+    func saveContext() {
+        // SAVE WITH COREDATA
         
         do {
-            let data = try encoder.encode(self.itemArray)
-            try data.write(to: self.dataFilePath!)
+            try context.save()
         } catch {
             print(error)
         }
+        
+        // SAVE WITH CODABLE
+//        let encoder = PropertyListEncoder()
+//
+//        do {
+//            let data = try encoder.encode(self.itemArray)
+//            try data.write(to: self.dataFilePath!)
+//        } catch {
+//            print(error)
+//        }
         
         tableView.reloadData()
     }
     
     func loadItems() {
-        if let data = try? Data(contentsOf: dataFilePath!) {
-            let decoder = PropertyListDecoder()
-            do {
-                itemArray = try decoder.decode([Item].self, from: data)
-            } catch {
-                print(error)
-            }
+        // LOAD WITH COREDATA
+        let request: NSFetchRequest<Item> = Item.fetchRequest()
+        do {
+            itemArray = try context.fetch(request)
+        } catch {
+            print(error)
+        }
+     
+        // LOAD WITH CODABLE
+//        if let data = try? Data(contentsOf: dataFilePath!) {
+//            let decoder = PropertyListDecoder()
+//            do {
+//                itemArray = try decoder.decode([Item].self, from: data)
+//            } catch {
+//                print(error)
+//            }
+//        }
+    }
+    
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            context.delete(itemArray[indexPath.row])
+            itemArray.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .fade)
+            saveContext()
         }
     }
 }
