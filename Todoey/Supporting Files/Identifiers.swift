@@ -10,6 +10,7 @@ import Foundation
 
 enum Identifiers: String {
     case PrototypeCellId = "toDoItemCell"
+    case CategoryCell = "CategoryCell"
 }
 
 enum Persistence: String {
@@ -22,4 +23,14 @@ enum Pathing: String {
 
 enum Entities: String {
     case Item = "Item"
+    case Category = "Category"
+}
+
+enum ItemPredicates: String {
+    case Title = "title"
+    case Done = "done"
+}
+
+enum StoryboardSegues: String {
+    case ItemsView = "goToItems"
 }
