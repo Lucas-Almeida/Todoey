@@ -8,11 +8,15 @@
 
 import UIKit
 import CoreData
+import RealmSwift
 
 class CategoryTableViewController: UITableViewController {
     
-    let context = CoreDataManager.sharedManager.persistentContainer.viewContext
-    var categories = [Category]()
+//    let context = CoreDataManager.sharedManager.persistentContainer.viewContext
+//    var categories = [Category]()
+    var categories: Results<Category>?
+    
+    let realm = try! Realm()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,48 +27,76 @@ class CategoryTableViewController: UITableViewController {
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
         
-        loadCategories()
+//        loadCategories()
+        loadRealm()
     }
     
     // MARK: - Data Manipulation Methods
     
-    func saveContext() {
+    
+    // MARK: - Save and Load with Realm
+    
+    func saveRealm(category: Object) {
         do {
-            try context.save()
+            try realm.write {
+                realm.add(category)
+            }
+            tableView.reloadData()
         } catch {
-            print(error.localizedDescription)
+            print("Error trying to save")
         }
+    }
+    
+    func loadRealm() {
+        categories = realm.objects(Category.self)
         tableView.reloadData()
     }
     
-    func loadCategories(with request: NSFetchRequest<Category> = Category.fetchRequest()) {
-        do {
-            categories = try context.fetch(request)
-        } catch {
-            print(error.localizedDescription)
-        }
-        tableView.reloadData()
-    }
     
+    // MARK: - Save and Load with Core Data
+//    func saveContext() {
+//        do {
+//            try context.save()
+//        } catch {
+//            print(error.localizedDescription)
+//        }
+//        tableView.reloadData()
+//    }
+
+    // CORE DATA
+//    func loadCategories(with request: NSFetchRequest<Category> = Category.fetchRequest()) {
+//        do {
+//            categories = try context.fetch(request)
+//        } catch {
+//            print(error.localizedDescription)
+//        }
+//        tableView.reloadData()
+//    }
+
     // MARK: - Table view data source
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return categories.count
+        return categories?.count ?? 1
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: Identifiers.CategoryCell.rawValue, for: indexPath)
-        cell.textLabel?.text = categories[indexPath.row].name
+        cell.textLabel?.text = categories?[indexPath.row].name ?? "No Categories Added Yet"
         return cell
     }
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            context.delete(categories[indexPath.row])
-            categories.remove(at: indexPath.row)
+            if let category = categories?[indexPath.row] {
+                do {
+                    try realm.write {
+                        realm.delete(category)
+                    }
+                } catch {
+                    print(error)
+                }
+            }
             tableView.deleteRows(at: [indexPath], with: .fade)
-            saveContext()
         }
     }
     
@@ -75,10 +107,9 @@ class CategoryTableViewController: UITableViewController {
         let alert = UIAlertController(title: "Add a new category", message: "", preferredStyle: .alert)
         
         let addAction = UIAlertAction(title: "Add", style: .default) { (action) in
-            let newCategory = Category(context: self.context)
+            let newCategory = Category()
             newCategory.name = textField.text!
-            self.categories.append(newCategory)
-            self.saveContext()
+            self.saveRealm(category: newCategory)
         }
         
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
@@ -104,12 +135,11 @@ class CategoryTableViewController: UITableViewController {
         let destinationVC = segue.destination as! TodoListViewController
         
         if let indexPath = tableView.indexPathForSelectedRow {
-            destinationVC.selectedCategory = categories[indexPath.row]
+            destinationVC.selectedCategory = categories?[indexPath.row]
         }
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
         return 1
     }
 
