@@ -10,6 +10,7 @@
 		69990A9AF5A669315B0EE8F7 /* Pods_Todoey.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9BB87607A22B5A15F01517B /* Pods_Todoey.framework */; };
 		A0032A6C22144E4000CF43F2 /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0032A6B22144E4000CF43F2 /* Item.swift */; };
 		A0032A6E22144E4700CF43F2 /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0032A6D22144E4700CF43F2 /* Category.swift */; };
+		A05EA06F221C967000BB8C53 /* SwipeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A05EA06E221C967000BB8C53 /* SwipeTableViewController.swift */; };
 		A0783FE0220AF80800860B8A /* CoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0783FDF220AF80800860B8A /* CoreDataManager.swift */; };
 		A08703352211AA5500E0BDBE /* CategoryTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A08703342211AA5500E0BDBE /* CategoryTableViewController.swift */; };
 		A0CE371B21FD10BA000D1B7C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A0CE371A21FD10BA000D1B7C /* AppDelegate.swift */; };
@@ -24,6 +25,7 @@
 		51F9DAF34F20613B2E0568FF /* Pods-Todoey.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Todoey.release.xcconfig"; path = "Pods/Target Support Files/Pods-Todoey/Pods-Todoey.release.xcconfig"; sourceTree = "<group>"; };
 		A0032A6B22144E4000CF43F2 /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		A0032A6D22144E4700CF43F2 /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
+		A05EA06E221C967000BB8C53 /* SwipeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeTableViewController.swift; sourceTree = "<group>"; };
 		A0783FDF220AF80800860B8A /* CoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataManager.swift; sourceTree = "<group>"; };
 		A08703342211AA5500E0BDBE /* CategoryTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CategoryTableViewController.swift; path = Todoey/Controllers/CategoryTableViewController.swift; sourceTree = SOURCE_ROOT; };
 		A0CE371721FD10BA000D1B7C /* Todoey.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Todoey.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -90,6 +92,7 @@
 			children = (
 				A08703342211AA5500E0BDBE /* CategoryTableViewController.swift */,
 				A0CE371C21FD10BA000D1B7C /* TodoListViewController.swift */,
+				A05EA06E221C967000BB8C53 /* SwipeTableViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -213,15 +216,19 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Todoey/Pods-Todoey-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/ChameleonFramework/ChameleonFramework.framework",
 				"${BUILT_PRODUCTS_DIR}/Realm/Realm.framework",
 				"${BUILT_PRODUCTS_DIR}/RealmSwift/RealmSwift.framework",
+				"${BUILT_PRODUCTS_DIR}/SwipeCellKit/SwipeCellKit.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ChameleonFramework.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Realm.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RealmSwift.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwipeCellKit.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -257,6 +264,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A05EA06F221C967000BB8C53 /* SwipeTableViewController.swift in Sources */,
 				A0CE371D21FD10BA000D1B7C /* TodoListViewController.swift in Sources */,
 				A0CE372E21FD121F000D1B7C /* Identifiers.swift in Sources */,
 				A0783FE0220AF80800860B8A /* CoreDataManager.swift in Sources */,

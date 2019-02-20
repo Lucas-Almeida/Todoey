@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 import RealmSwift
 
-class TodoListViewController: UITableViewController {
+class TodoListViewController: SwipeTableViewController {
 
 //    let context = CoreDataManager.sharedManager.persistentContainer.viewContext
 //    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent(Pathing.ItemsPlist.rawValue)
@@ -39,6 +39,7 @@ class TodoListViewController: UITableViewController {
 //        }
 //        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
+        tableView.separatorStyle = .none
         navigationItem.title = selectedCategory?.name
         searchBar.delegate = self
     }
@@ -50,13 +51,16 @@ class TodoListViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: Identifiers.PrototypeCellId.rawValue, for: indexPath)
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
+        
         if let item = itemArray?[indexPath.row] {
             cell.textLabel?.text = item.title
             cell.accessoryType = item.done ? .checkmark : .none
+            cell.backgroundColor = UIColor(hexString: item.cellColor ?? "#1D9BF6")
         } else {
             cell.textLabel?.text = "No Items Added"
         }
+        
         return cell
     }
     
@@ -88,6 +92,7 @@ class TodoListViewController: UITableViewController {
                         let newItem = Item()
                         newItem.title = textField.text!
                         newItem.dateCreated = Date()
+                        newItem.cellColor = UIColor.randomFlat.hexValue()
                         currentCategory.items.append(newItem)
                     }
                 } catch {
@@ -128,18 +133,17 @@ class TodoListViewController: UITableViewController {
         tableView.reloadData()
     }
     
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            if let item = itemArray?[indexPath.row] {
-                do {
-                    try realm.write {
-                        realm.delete(item)
-                    }
-                } catch {
-                    print(error)
+    //MARK: - Delete Data From Swipe
+
+    override func updateModel(at indexPath: IndexPath) {
+        if let item = itemArray?[indexPath.row] {
+            do {
+                try realm.write {
+                    realm.delete(item)
                 }
+            } catch {
+                print(error)
             }
-            tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
 }

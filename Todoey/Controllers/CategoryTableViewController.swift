@@ -9,8 +9,9 @@
 import UIKit
 import CoreData
 import RealmSwift
+import ChameleonFramework
 
-class CategoryTableViewController: UITableViewController {
+class CategoryTableViewController: SwipeTableViewController {
     
 //    let context = CoreDataManager.sharedManager.persistentContainer.viewContext
 //    var categories = [Category]()
@@ -28,6 +29,8 @@ class CategoryTableViewController: UITableViewController {
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
         
 //        loadCategories()
+        tableView.rowHeight = 80.0
+        tableView.separatorStyle = .none
         loadRealm()
     }
     
@@ -52,26 +55,19 @@ class CategoryTableViewController: UITableViewController {
         tableView.reloadData()
     }
     
+    //MARK: - Delete Data From Swipe
     
-    // MARK: - Save and Load with Core Data
-//    func saveContext() {
-//        do {
-//            try context.save()
-//        } catch {
-//            print(error.localizedDescription)
-//        }
-//        tableView.reloadData()
-//    }
-
-    // CORE DATA
-//    func loadCategories(with request: NSFetchRequest<Category> = Category.fetchRequest()) {
-//        do {
-//            categories = try context.fetch(request)
-//        } catch {
-//            print(error.localizedDescription)
-//        }
-//        tableView.reloadData()
-//    }
+    override func updateModel(at indexPath: IndexPath) {
+        if let category = self.categories?[indexPath.row] {
+            do {
+                try self.realm.write {
+                    self.realm.delete(category)
+                }
+            } catch {
+                print(error)
+            }
+        }
+    }
 
     // MARK: - Table view data source
 
@@ -80,24 +76,10 @@ class CategoryTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: Identifiers.CategoryCell.rawValue, for: indexPath)
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         cell.textLabel?.text = categories?[indexPath.row].name ?? "No Categories Added Yet"
+        cell.backgroundColor = UIColor(hexString: categories?[indexPath.row].cellColor ?? "#1D9BF6")        
         return cell
-    }
-    
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            if let category = categories?[indexPath.row] {
-                do {
-                    try realm.write {
-                        realm.delete(category)
-                    }
-                } catch {
-                    print(error)
-                }
-            }
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        }
     }
     
     // MARK: - Add New Categories
@@ -109,6 +91,7 @@ class CategoryTableViewController: UITableViewController {
         let addAction = UIAlertAction(title: "Add", style: .default) { (action) in
             let newCategory = Category()
             newCategory.name = textField.text!
+            newCategory.cellColor = UIColor.randomFlat.hexValue()
             self.saveRealm(category: newCategory)
         }
         
@@ -139,10 +122,41 @@ class CategoryTableViewController: UITableViewController {
         }
     }
     
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
+    // MARK: - Save and Load with Core Data
+    //    func saveContext() {
+    //        do {
+    //            try context.save()
+    //        } catch {
+    //            print(error.localizedDescription)
+    //        }
+    //        tableView.reloadData()
+    //    }
+    
+    // CORE DATA
+    //    func loadCategories(with request: NSFetchRequest<Category> = Category.fetchRequest()) {
+    //        do {
+    //            categories = try context.fetch(request)
+    //        } catch {
+    //            print(error.localizedDescription)
+    //        }
+    //        tableView.reloadData()
+    //    }
 
+    //    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+    //        if editingStyle == .delete {
+    //            if let category = categories?[indexPath.row] {
+    //                do {
+    //                    try realm.write {
+    //                        realm.delete(category)
+    //                    }
+    //                } catch {
+    //                    print(error)
+    //                }
+    //            }
+    //            tableView.deleteRows(at: [indexPath], with: .fade)
+    //        }
+    //    }
+    
     /*
     // Override to support conditional editing of the table view.
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
@@ -188,3 +202,4 @@ class CategoryTableViewController: UITableViewController {
     }
     */
 }
+

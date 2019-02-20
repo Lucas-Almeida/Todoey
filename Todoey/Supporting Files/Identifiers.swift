@@ -9,8 +9,7 @@
 import Foundation
 
 enum Identifiers: String {
-    case PrototypeCellId = "toDoItemCell"
-    case CategoryCell = "CategoryCell"
+    case CellId = "Cell"
 }
 
 enum Persistence: String {
