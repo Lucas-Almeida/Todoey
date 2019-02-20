@@ -9,6 +9,7 @@
 import UIKit
 import CoreData
 import RealmSwift
+import ChameleonFramework
 
 class TodoListViewController: SwipeTableViewController {
 
@@ -18,7 +19,7 @@ class TodoListViewController: SwipeTableViewController {
 //    var itemArray = [Item]()
     
     var itemArray: Results<Item>?
-    
+
     var selectedCategory: Category? {
         didSet {
 //            loadItems()
@@ -40,7 +41,7 @@ class TodoListViewController: SwipeTableViewController {
 //        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
         
         tableView.separatorStyle = .none
-        navigationItem.title = selectedCategory?.name
+        navigationItem.title = selectedCategory?.name.capitalized
         searchBar.delegate = self
     }
     
@@ -54,9 +55,13 @@ class TodoListViewController: SwipeTableViewController {
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
         
         if let item = itemArray?[indexPath.row] {
-            cell.textLabel?.text = item.title
+            cell.textLabel?.text = item.title.capitalized
             cell.accessoryType = item.done ? .checkmark : .none
-            cell.backgroundColor = UIColor(hexString: item.cellColor ?? "#1D9BF6")
+            
+            if let color = UIColor(hexString: selectedCategory!.cellColor!)?.darken(byPercentage: CGFloat(indexPath.row) / CGFloat(itemArray!.count)) {
+                cell.backgroundColor = color
+                cell.textLabel?.textColor = ContrastColorOf(color, returnFlat: true)
+            }
         } else {
             cell.textLabel?.text = "No Items Added"
         }
@@ -92,7 +97,6 @@ class TodoListViewController: SwipeTableViewController {
                         let newItem = Item()
                         newItem.title = textField.text!
                         newItem.dateCreated = Date()
-                        newItem.cellColor = UIColor.randomFlat.hexValue()
                         currentCategory.items.append(newItem)
                     }
                 } catch {
@@ -165,7 +169,6 @@ extension TodoListViewController: UISearchBarDelegate {
         }
     }
 }
-
 
 // MARK: - Core Data
 
