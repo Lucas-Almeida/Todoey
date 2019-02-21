@@ -39,10 +39,31 @@ class TodoListViewController: SwipeTableViewController {
 //            itemArray = items
 //        }
 //        print(FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
-        
+
         tableView.separatorStyle = .none
-        navigationItem.title = selectedCategory?.name.capitalized
         searchBar.delegate = self
+        self.navigationController?.navigationBar.prefersLargeTitles = true
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        guard let colorHex = selectedCategory?.cellColor else { fatalError("ColorHex error") }
+        navigationItem.title = selectedCategory?.name.capitalized
+        updateNavBar(withHexCode: colorHex)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        updateNavBar(withHexCode: "#1D9BF6")
+    }
+    
+    //MARK: - Nav Bar Setup Methods
+    
+    func updateNavBar(withHexCode colorHexCode: String) {
+        guard let navBar = navigationController?.navigationBar else { fatalError("Navigation Bar error") }
+        guard let navBarColor = UIColor(hexString: colorHexCode) else { fatalError("Navbar color error") }
+        navBar.barTintColor = navBarColor
+        navBar.tintColor = ContrastColorOf(navBarColor, returnFlat: true)
+        navBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor : ContrastColorOf(navBarColor, returnFlat: true)]
+        searchBar.barTintColor = navBarColor
     }
     
     //MARK - Tableview Datasource Methods

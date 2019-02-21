@@ -31,6 +31,7 @@ class CategoryTableViewController: SwipeTableViewController {
 //        loadCategories()
         tableView.rowHeight = 80.0
         tableView.separatorStyle = .none
+        self.navigationController?.navigationBar.prefersLargeTitles = true
         loadRealm()
     }
     
@@ -77,8 +78,16 @@ class CategoryTableViewController: SwipeTableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
-        cell.textLabel?.text = categories?[indexPath.row].name.capitalized ?? "No Categories Added Yet"
-        cell.backgroundColor = UIColor(hexString: categories?[indexPath.row].cellColor ?? "#1D9BF6")        
+        
+        guard let category = categories?[indexPath.row] else { fatalError("No caregories") }
+        
+        cell.textLabel?.text = category.name.capitalized
+        
+        guard let categoryColor = UIColor(hexString: category.cellColor!) else { fatalError() }
+        
+        cell.backgroundColor = categoryColor
+        cell.textLabel?.textColor = ContrastColorOf(categoryColor, returnFlat: true)
+        
         return cell
     }
     

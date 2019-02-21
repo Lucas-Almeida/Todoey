@@ -39,7 +39,6 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Items" id="sEd-qB-465">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="rgT-2g-fjU">
-                            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <connections>
                                 <action selector="addButtonPressed:" destination="Vv3-o6-9oo" id="BkC-zZ-9lL"/>
                             </connections>
@@ -78,7 +77,6 @@
                     </tableView>
                     <navigationItem key="navigationItem" title="Todoey" id="hyF-x8-PcZ">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="fDo-fI-YmM">
-                            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <connections>
                                 <action selector="addButtonPressed:" destination="Eqm-v5-Qc3" id="zuv-hh-Dq5"/>
                             </connections>
